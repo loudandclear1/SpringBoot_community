@@ -44,4 +44,16 @@ public class MapperTests {
         System.out.println(rows);
         System.out.println(user.getId());
     }
+
+    @Test
+    public void updateUser() {
+        int rows = userMapper.updateStatus(150, 1);
+        System.out.println(rows);
+
+        rows = userMapper.updateHeader(150, "http://www.nowcoder.com/102.png");
+        System.out.println(rows);
+
+        rows = userMapper.updatePassword(150, "147258369");
+        System.out.println(rows);
+    }
 }
