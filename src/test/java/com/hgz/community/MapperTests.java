@@ -1,6 +1,8 @@
 package com.hgz.community;
 
+import com.hgz.community.dao.DiscussPostMapper;
 import com.hgz.community.dao.UserMapper;
+import com.hgz.community.entity.DiscussPost;
 import com.hgz.community.entity.User;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,6 +12,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Date;
+import java.util.List;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
@@ -17,6 +20,9 @@ import java.util.Date;
 public class MapperTests {
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private DiscussPostMapper discussPostMapper;
 
     @Test
     public void testSelectUser() {
@@ -54,6 +60,17 @@ public class MapperTests {
         System.out.println(rows);
 
         rows = userMapper.updatePassword(150, "147258369");
+        System.out.println(rows);
+    }
+
+    @Test
+    public void testSelectPosts() {
+        List<DiscussPost> list = discussPostMapper.selectDiscussPosts(149, 0, 10);
+        for(DiscussPost post : list) {
+            System.out.println(post);
+        }
+
+        int rows = discussPostMapper.selectDiscussPostRows(149);
         System.out.println(rows);
     }
 }
