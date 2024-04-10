@@ -8,6 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
@@ -22,6 +23,12 @@ public class MailTests {
 
     @Test
     public void testTextMail() {
-        mailClient.sendMail("2296162801@qq.com", "test", "hello hgz, this is mail test");
+        Context context = new Context();
+        context.setVariable("username", "Alice");
+
+        String content = templateEngine.process("/mail/demo", context);
+        System.out.println(content);
+
+        mailClient.sendMail("2296162801@qq.com", "test", content);
     }
 }
