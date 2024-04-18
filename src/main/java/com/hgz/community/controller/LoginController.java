@@ -4,7 +4,9 @@ import com.google.code.kaptcha.Producer;
 import com.hgz.community.entity.User;
 import com.hgz.community.service.UserService;
 import com.hgz.community.util.CommunityConstant;
+import com.hgz.community.util.CookieUtil;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -118,4 +120,5 @@ public class LoginController implements CommunityConstant {
             return "/site/login";
         }
     }
+
 }

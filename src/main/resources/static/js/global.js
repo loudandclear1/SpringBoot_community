@@ -1,5 +1,14 @@
 var CONTEXT_PATH = "/community";
 
+$("form").submit(function(e){
+	var pwd1 = $("#new-password").val();
+	var pwd2 = $("#confirm-newPassword").val();
+	if (pwd1 != pwd2) {
+		$("#confirm-newPassword").addClass("is-invalid");
+		return false;
+	}
+});
+
 window.alert = function(message) {
 	if(!$(".alert-box").length) {
 		$("body").append(
