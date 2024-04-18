@@ -22,7 +22,6 @@ public interface LoginTicketMapper {
             "<script>",
             "update login_ticket set status = #{status} where ticket = #{ticket} ",
             "<if test=\"ticket != null\"> ",
-            "ans 1 = 1 ",
             "</if>",
             "</script>"
     })
