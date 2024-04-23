@@ -139,7 +139,7 @@ public class UserService implements CommunityConstant {
         loginTicket.setUserId(user.getId());
         loginTicket.setTicket(CommunityUtil.generationUUID());
         loginTicket.setStatus(0);
-        loginTicket.setExpired(new Date(System.currentTimeMillis() + expiredSeconds * 1000));
+        loginTicket.setExpired(new Date(System.currentTimeMillis() + expiredSeconds * 1000L));
         loginTicketMapper.insertLoginTicket(loginTicket);
 
         map.put("ticket", loginTicket.getTicket());
@@ -156,5 +156,10 @@ public class UserService implements CommunityConstant {
 
     public int updateHeader(int userId, String headUrl) {
         return userMapper.updateHeader(userId, headUrl);
+    }
+
+    public int updatePassword(int userId, String password, String salt) {
+        String newPassword = CommunityUtil.md5(salt + password);
+        return userMapper.updatePassword(userId, newPassword);
     }
 }

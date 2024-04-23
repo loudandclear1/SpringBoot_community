@@ -44,9 +44,6 @@ public class UserController {
     @Autowired
     private HostHolder hostHolder;
 
-    @Autowired
-    private UserMapper userMapper;
-
     @LoginRequired
     @RequestMapping(path = "/setting", method = RequestMethod.GET)
     public String getSettingPage() {
@@ -110,13 +107,13 @@ public class UserController {
     public String changePassword(String oldPassword, String newPassword, Model model) {
         User user = hostHolder.getUser();
         String userPassword = user.getPassword();
-        String userSalt = user.getSalt();
+        String salt = user.getSalt();
 
         if(StringUtils.isBlank(oldPassword)) {
             model.addAttribute("oldPasswordMsg", "原始密码不能为空！");
             return "/site/setting";
         }
-        String oldPassword_userSalt = oldPassword + userSalt;
+        String oldPassword_userSalt = oldPassword + salt;
         String oldPassword_md5 = CommunityUtil.md5(oldPassword_userSalt);
         if (oldPassword_md5 != null && !oldPassword_md5.equals(userPassword)) {
             model.addAttribute("oldPasswordMsg", "原始密码不正确！");
@@ -131,10 +128,7 @@ public class UserController {
             return "/site/setting";
         }
 
-        String newPassword_userSalt = newPassword + userSalt;
-        String newPassword_md5 = CommunityUtil.md5(newPassword_userSalt);
-
-        userMapper.updatePassword(user.getId(), newPassword_md5);
+        userService.updatePassword(user.getId(), newPassword, salt);
 
         return "redirect:/login";
     }
