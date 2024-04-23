@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -104,19 +105,9 @@ public class UserController {
 
     @LoginRequired
     @RequestMapping(path = "/changePassword", method = RequestMethod.POST)
-    public String changePassword(String oldPassword, String newPassword, Model model) {
-        User user = hostHolder.getUser();
-        String userPassword = user.getPassword();
-        String salt = user.getSalt();
-
+    public String changePassword(String oldPassword, String newPassword, Model model, @CookieValue("ticket") String ticket) {
         if(StringUtils.isBlank(oldPassword)) {
             model.addAttribute("oldPasswordMsg", "原始密码不能为空！");
-            return "/site/setting";
-        }
-        String oldPassword_userSalt = oldPassword + salt;
-        String oldPassword_md5 = CommunityUtil.md5(oldPassword_userSalt);
-        if (oldPassword_md5 != null && !oldPassword_md5.equals(userPassword)) {
-            model.addAttribute("oldPasswordMsg", "原始密码不正确！");
             return "/site/setting";
         }
         if(StringUtils.isBlank(newPassword)) {
@@ -128,7 +119,19 @@ public class UserController {
             return "/site/setting";
         }
 
+        User user = hostHolder.getUser();
+        String userPassword = user.getPassword();
+        String salt = user.getSalt();
+        String oldPassword_Salt = oldPassword + salt;
+        String oldPassword_md5 = CommunityUtil.md5(oldPassword_Salt);
+
+        if (oldPassword_md5 != null && !oldPassword_md5.equals(userPassword)) {
+            model.addAttribute("oldPasswordMsg", "原始密码不正确！");
+            return "/site/setting";
+        }
+
         userService.updatePassword(user.getId(), newPassword, salt);
+        userService.logout(ticket);
 
         return "redirect:/login";
     }
