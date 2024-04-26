@@ -13,6 +13,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -105,6 +108,7 @@ public class UserController {
 
     @LoginRequired
     @RequestMapping(path = "/changePassword", method = RequestMethod.POST)
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public String changePassword(String oldPassword, String newPassword, Model model, @CookieValue("ticket") String ticket) {
         if(StringUtils.isBlank(oldPassword)) {
             model.addAttribute("oldPasswordMsg", "原始密码不能为空！");
