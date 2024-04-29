@@ -77,6 +77,11 @@
 			<artifactId>fastjson2</artifactId>
 			<version>2.0.49</version>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-redis</artifactId>
+			<version>3.2.5</version>
+		</dependency>
 
 
 	</dependencies>
