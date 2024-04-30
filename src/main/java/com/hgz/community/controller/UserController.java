@@ -3,6 +3,7 @@ package com.hgz.community.controller;
 import com.hgz.community.annotation.LoginRequired;
 import com.hgz.community.dao.UserMapper;
 import com.hgz.community.entity.User;
+import com.hgz.community.service.LikeService;
 import com.hgz.community.service.UserService;
 import com.hgz.community.util.CommunityUtil;
 import com.hgz.community.util.HostHolder;
@@ -48,6 +49,9 @@ public class UserController {
     @Autowired
     private HostHolder hostHolder;
 
+    @Autowired
+    private LikeService likeService;
+
     @LoginRequired
     @RequestMapping(path = "/setting", method = RequestMethod.GET)
     public String getSettingPage() {
@@ -57,14 +61,14 @@ public class UserController {
     @LoginRequired
     @RequestMapping(path = "/upload", method = RequestMethod.POST)
     public String uploadHeader(MultipartFile headerImage, Model model) {
-        if(headerImage == null) {
+        if (headerImage == null) {
             model.addAttribute("error", "您还没有选择图片！");
             return "/site/setting";
         }
 
         String fileName = headerImage.getOriginalFilename();
         String suffix = fileName.substring(fileName.lastIndexOf("."));
-        if(StringUtils.isBlank(suffix)) {
+        if (StringUtils.isBlank(suffix)) {
             model.addAttribute("error", "文件格式不正确！");
             return "/site/setting";
         }
@@ -74,7 +78,7 @@ public class UserController {
         try {
             headerImage.transferTo(dest);
         } catch (IOException e) {
-            logger.error("上传文件失败："+ e.getMessage());
+            logger.error("上传文件失败：" + e.getMessage());
             throw new RuntimeException("上传文件失败，服务器发生异常！");
         }
 
@@ -95,10 +99,10 @@ public class UserController {
         try (
                 FileInputStream fis = new FileInputStream(fileName);
                 OutputStream os = response.getOutputStream();
-                ) {
+        ) {
             byte[] buffer = new byte[1024];
             int b = 0;
-            while((b = fis.read(buffer)) != -1) {
+            while ((b = fis.read(buffer)) != -1) {
                 os.write(buffer, 0, b);
             }
         } catch (IOException e) {
@@ -110,15 +114,15 @@ public class UserController {
     @RequestMapping(path = "/changePassword", method = RequestMethod.POST)
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public String changePassword(String oldPassword, String newPassword, Model model, @CookieValue("ticket") String ticket) {
-        if(StringUtils.isBlank(oldPassword)) {
+        if (StringUtils.isBlank(oldPassword)) {
             model.addAttribute("oldPasswordMsg", "原始密码不能为空！");
             return "/site/setting";
         }
-        if(StringUtils.isBlank(newPassword)) {
+        if (StringUtils.isBlank(newPassword)) {
             model.addAttribute("newPasswordMsg", "新密码不能为空！");
             return "/site/setting";
         }
-        if(oldPassword.equals(newPassword)) {
+        if (oldPassword.equals(newPassword)) {
             model.addAttribute("newPasswordMsg", "新密码不能和旧密码相同！");
             return "/site/setting";
         }
@@ -138,5 +142,23 @@ public class UserController {
         userService.logout(ticket);
 
         return "redirect:/login";
+    }
+
+    // 个人主页
+    @RequestMapping(path = "/profile/{userId}", method = RequestMethod.GET)
+    public String getProfilePage(@PathVariable("userId") int userId, Model model) {
+        User user = userService.findUserById(userId);
+
+        if (user == null) {
+            throw new RuntimeException("该用户不存在！");
+        }
+
+        // 用户
+        model.addAttribute("user", user);
+        // 点赞数量
+        int likeCount = likeService.findUserLikeCount(userId);
+        model.addAttribute("likeCount", likeCount);
+
+        return "/site/profile";
     }
 }

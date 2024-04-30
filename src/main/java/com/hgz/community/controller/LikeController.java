@@ -24,15 +24,19 @@ public class LikeController {
 
     @RequestMapping(path = "/like", method = RequestMethod.POST)
     @ResponseBody
-    public String like(int entityType, int entityId) {
+    public String like(int entityType, int entityId, int entityUserId) {
         User user = hostHolder.getUser();
 
-        likeService.like(user.getId(), entityType, entityId);
+        // 点赞
+        likeService.like(user.getId(), entityType, entityId, entityUserId);
 
+        // 点赞数量
         long likeCount = likeService.findEntityLikeCount(entityType, entityId);
 
+        // 点赞状态
         int likeStatus = likeService.findEntityLikeStatus(user.getId(), entityType, entityId);
 
+        // 点赞结果
         Map<String, Object> map = new HashMap<>();
         map.put("likeCount", likeCount);
         map.put("likeStatus", likeStatus);
