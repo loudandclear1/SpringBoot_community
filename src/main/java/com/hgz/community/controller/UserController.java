@@ -153,7 +153,6 @@ public class UserController implements CommunityConstant {
     @RequestMapping(path = "/profile/{userId}", method = RequestMethod.GET)
     public String getProfilePage(@PathVariable("userId") int userId, Model model) {
         User user = userService.findUserById(userId);
-
         if (user == null) {
             throw new RuntimeException("该用户不存在！");
         }

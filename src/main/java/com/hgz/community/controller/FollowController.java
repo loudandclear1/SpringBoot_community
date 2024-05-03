@@ -23,6 +23,9 @@ public class FollowController {
     @ResponseBody
     public String follow(int entityType, int entityId) {
         User user = hostHolder.getUser();
+        if (user == null) {
+            return CommunityUtil.getJSONString(406, "你还没有登录哦！");
+        }
 
         followService.follow(user.getId(), entityType, entityId);
 
@@ -33,6 +36,9 @@ public class FollowController {
     @ResponseBody
     public String unfollow(int entityType, int entityId) {
         User user = hostHolder.getUser();
+        if (user == null) {
+            return CommunityUtil.getJSONString(406, "你还没有登录哦！");
+        }
 
         followService.unfollow(user.getId(), entityType, entityId);
 

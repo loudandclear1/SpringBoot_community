@@ -32,6 +32,9 @@ public class MessageController {
     @RequestMapping(path = "/letter/list", method = RequestMethod.GET)
     public String getLetterList(Model model, Page page) {
         User user = hostHolder.getUser();
+        if (user == null) {
+            return "/site/login";
+        }
 
         page.setLimit(5);
         page.setPath("/letter/list");
@@ -70,8 +73,8 @@ public class MessageController {
         List<Message> letterList = messageService.findLetters(conversationId, page.getOffset(), page.getLimit());
         List<Map<String, Object>> letters = new ArrayList<>();
 
-        if(letterList != null) {
-            for(Message letter : letterList) {
+        if (letterList != null) {
+            for (Message letter : letterList) {
                 Map<String, Object> map = new HashMap<>();
                 map.put("letter", letter);
                 map.put("fromUser", userService.findUserById(letter.getFromId()));
@@ -84,7 +87,7 @@ public class MessageController {
         model.addAttribute("target", getLetterTarget(conversationId));
 
         List<Integer> ids = getLetterIds(letterList);
-        if(!ids.isEmpty()) {
+        if (!ids.isEmpty()) {
             messageService.readMessage(ids);
         }
 
@@ -106,9 +109,9 @@ public class MessageController {
     private List<Integer> getLetterIds(List<Message> letteList) {
         List<Integer> ids = new ArrayList<>();
 
-        if(letteList != null) {
-            for(Message message : letteList) {
-                if(hostHolder.getUser().getId() == message.getToId() && message.getStatus() == 0) {
+        if (letteList != null) {
+            for (Message message : letteList) {
+                if (hostHolder.getUser().getId() == message.getToId() && message.getStatus() == 0) {
                     ids.add(message.getId());
                 }
             }
@@ -121,7 +124,7 @@ public class MessageController {
     @ResponseBody
     public String sendLetter(String toName, String content) {
         User target = userService.findUserByName(toName);
-        if(target == null) {
+        if (target == null) {
             return CommunityUtil.getJSONString(1, "目标用户不存在！");
         }
 
@@ -129,7 +132,7 @@ public class MessageController {
         message.setFromId(hostHolder.getUser().getId());
         message.setToId(target.getId());
 
-        if(message.getFromId() < message.getToId()) {
+        if (message.getFromId() < message.getToId()) {
             message.setConversationId(message.getFromId() + "_" + message.getToId());
         } else {
             message.setConversationId(message.getToId() + "_" + message.getFromId());
