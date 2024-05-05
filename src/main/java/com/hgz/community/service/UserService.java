@@ -181,7 +181,9 @@ public class UserService implements CommunityConstant {
 
     public int updatePassword(int userId, String password, String salt) {
         String newPassword = CommunityUtil.md5(password + salt);
-        return userMapper.updatePassword(userId, newPassword);
+        int rows = userMapper.updatePassword(userId, newPassword);
+        clearCache(userId);
+        return rows;
     }
 
     // 1.优先查询缓存cache
