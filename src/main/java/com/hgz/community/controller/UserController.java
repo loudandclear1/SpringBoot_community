@@ -117,7 +117,6 @@ public class UserController implements CommunityConstant {
 
     @LoginRequired
     @RequestMapping(path = "/changePassword", method = RequestMethod.POST)
-    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public String changePassword(String oldPassword, String newPassword, Model model, @CookieValue("ticket") String ticket) {
         if (StringUtils.isBlank(oldPassword)) {
             model.addAttribute("oldPasswordMsg", "原始密码不能为空！");
