@@ -106,6 +106,8 @@ public class UserService implements CommunityConstant {
     }
 
     public int activation(int userId, String code) {
+        // 注册后用户数据未存入redis
+        // 而且激活要修改数据，会删除redis中的用户数据，没必要从redis中查找
         User user = userMapper.selectById(userId);
         if (user.getStatus() == 1) {
             return ACTIVATION_REPEAT;
@@ -163,12 +165,12 @@ public class UserService implements CommunityConstant {
 
     public void logout(String ticket) {
         if (StringUtils.isBlank(ticket)) {
-            return;
+            throw new IllegalArgumentException("ticket不能为空");
         }
         String redisKey = RedisKeyUtil.getTicketKey(ticket);
         LoginTicket loginTicket = (LoginTicket) redisTemplate.opsForValue().get(redisKey);
         if (loginTicket == null) {
-            return;
+            throw new IllegalStateException("找不到对应的ticket或ticket已过期");
         }
         loginTicket.setStatus(1);
         redisTemplate.opsForValue().set(redisKey, loginTicket);
@@ -179,15 +181,14 @@ public class UserService implements CommunityConstant {
         return (LoginTicket) redisTemplate.opsForValue().get(redisKey);
     }
 
-    public int updateHeader(int userId, String headUrl) {
-        int rows = userMapper.updateHeader(userId, headUrl);
+    public int updateHeader(int userId, String headerUrl) {
+        int rows = userMapper.updateHeader(userId, headerUrl);
         clearCache(userId);
         return rows;
     }
 
     public int updatePassword(int userId, String password, String salt) {
-        String newPassword = CommunityUtil.md5(password + salt);
-        int rows = userMapper.updatePassword(userId, newPassword);
+        int rows = userMapper.updatePassword(userId, CommunityUtil.md5(password + salt));
         clearCache(userId);
         return rows;
     }
