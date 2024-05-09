@@ -193,7 +193,7 @@ public class MessageController implements CommunityConstant {
             messageVO.put("entityId", data.get("entityId"));
             messageVO.put("postId", data.get("postId"));
 
-            int count = messageService.findNoticeUnreadCount(user.getId(), TOPIC_LIKE);
+            int count = messageService.findNoticeCount(user.getId(), TOPIC_LIKE);
             messageVO.put("count", count);
 
             int unread = messageService.findNoticeUnreadCount(user.getId(), TOPIC_LIKE);
