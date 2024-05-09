@@ -1,7 +1,9 @@
 package com.hgz.community.controller;
 
+import com.hgz.community.entity.Event;
 import com.hgz.community.entity.Page;
 import com.hgz.community.entity.User;
+import com.hgz.community.event.EventProducer;
 import com.hgz.community.service.FollowService;
 import com.hgz.community.service.UserService;
 import com.hgz.community.util.CommunityConstant;
@@ -30,6 +32,9 @@ public class FollowController implements CommunityConstant {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private EventProducer eventProducer;
+
     @RequestMapping(path = "/follow", method = RequestMethod.POST)
     @ResponseBody
     public String follow(int entityType, int entityId) {
@@ -37,8 +42,16 @@ public class FollowController implements CommunityConstant {
         if (user == null) {
             return CommunityUtil.getJSONString(403, "你还没有登录哦！");
         }
-
         followService.follow(user.getId(), entityType, entityId);
+
+        // 关注事件
+        Event event = new Event()
+                .setTopic(TOPIC_FOLLOW)
+                .setUserId(user.getId())
+                .setEntityType(entityType)
+                .setEntityId(entityId)
+                .setEntityUserId(entityId);
+        eventProducer.fireEvent(event);
 
         return CommunityUtil.getJSONString(0, "已关注！");
     }

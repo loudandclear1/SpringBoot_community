@@ -103,7 +103,7 @@ public class UserController implements CommunityConstant {
         response.setContentType("image/" + suffix);
         try (
                 FileInputStream fis = new FileInputStream(fileName);
-                OutputStream os = response.getOutputStream();
+                OutputStream os = response.getOutputStream()
         ) {
             byte[] buffer = new byte[1024];
             int b = 0;

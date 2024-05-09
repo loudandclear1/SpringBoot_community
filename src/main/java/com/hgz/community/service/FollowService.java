@@ -21,6 +21,7 @@ public class FollowService implements CommunityConstant {
     @Autowired
     private UserService userService;
 
+
     public void follow(int userId, int entityType, int entityId) {
         redisTemplate.execute(new SessionCallback() {
             @Override
