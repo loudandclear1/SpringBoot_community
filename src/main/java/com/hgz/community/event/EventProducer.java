@@ -1,6 +1,6 @@
 package com.hgz.community.event;
 
-import com.alibaba.fastjson2.JSONObject;
+import com.alibaba.fastjson.JSONObject;
 import com.hgz.community.entity.Event;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;

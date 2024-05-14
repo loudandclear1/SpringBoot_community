@@ -1,6 +1,7 @@
 package com.hgz.community.event;
 
-import com.alibaba.fastjson2.JSONObject;
+
+import com.alibaba.fastjson.JSONObject;
 import com.hgz.community.entity.Event;
 import com.hgz.community.entity.Message;
 import com.hgz.community.service.MessageService;

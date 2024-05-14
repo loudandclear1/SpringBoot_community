@@ -5,13 +5,13 @@ import com.hgz.community.entity.User;
 import com.hgz.community.service.UserService;
 import com.hgz.community.util.CookieUtil;
 import com.hgz.community.util.HostHolder;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 
 @Component

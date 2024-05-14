@@ -1,11 +1,10 @@
 package com.hgz.community.util;
 
 
-import com.alibaba.fastjson2.JSONObject;
+import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.DigestUtils;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 

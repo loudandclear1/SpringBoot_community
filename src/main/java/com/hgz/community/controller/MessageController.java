@@ -1,6 +1,6 @@
 package com.hgz.community.controller;
 
-import com.alibaba.fastjson2.JSONObject;
+import com.alibaba.fastjson.JSONObject;
 import com.hgz.community.entity.Message;
 import com.hgz.community.entity.Page;
 import com.hgz.community.entity.User;
