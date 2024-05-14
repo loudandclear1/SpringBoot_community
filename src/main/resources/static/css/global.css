@@ -1,3 +1,19 @@
+@keyframes breath-effect {
+	0%, 100% {
+		background-color: #ff0000; /* 红色 */
+		color: white;
+	}
+	50% {
+		background-color: #ffffff; /* 白色 */
+		color: black;
+	}
+}
+
+.breathing {
+	animation: breath-effect 2s ease-in-out infinite;
+}
+
+
 html {
 	height: 100%;
 }

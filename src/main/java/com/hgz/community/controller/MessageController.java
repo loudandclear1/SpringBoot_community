@@ -1,9 +1,11 @@
 package com.hgz.community.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.hgz.community.entity.Event;
 import com.hgz.community.entity.Message;
 import com.hgz.community.entity.Page;
 import com.hgz.community.entity.User;
+import com.hgz.community.event.EventProducer;
 import com.hgz.community.service.MessageService;
 import com.hgz.community.service.UserService;
 import com.hgz.community.util.CommunityConstant;
@@ -31,6 +33,9 @@ public class MessageController implements CommunityConstant {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private EventProducer eventProducer;
 
     @RequestMapping(path = "/letter/list", method = RequestMethod.GET)
     public String getLetterList(Model model, Page page) {
@@ -63,7 +68,11 @@ public class MessageController implements CommunityConstant {
 
         int letterUnreadCount = messageService.findLetterUnreadCount(user.getId(), null);
         model.addAttribute("letterUnreadCount", letterUnreadCount);
-        int noticeUnreadCount = messageService.findNoticeUnreadCount(user.getId(), null);
+        int noticeUnreadCount = 0;
+        noticeUnreadCount += messageService.findNoticeUnreadCount(user.getId(), TOPIC_COMMENT);
+        noticeUnreadCount += messageService.findNoticeUnreadCount(user.getId(), TOPIC_FOLLOW);
+        noticeUnreadCount += messageService.findNoticeUnreadCount(user.getId(), TOPIC_LIKE);
+
         model.addAttribute("noticeUnreadCount", noticeUnreadCount);
 
         return "/site/letter";
@@ -147,6 +156,14 @@ public class MessageController implements CommunityConstant {
         message.setCreateTime(new Date());
         messageService.addMessage(message);
 
+        Event event = new Event()
+                .setTopic(TOPIC_MESSAGE)
+                .setUserId(hostHolder.getUser().getId())
+                .setEntityType(ENTITY_TYPE_USER)
+                .setEntityId(target.getId())
+                .setEntityUserId(target.getId());
+        eventProducer.fireEvent(event);
+
         return CommunityUtil.getJSONString(0);
     }
 
@@ -226,7 +243,10 @@ public class MessageController implements CommunityConstant {
         int letterUnreadCount = messageService.findLetterUnreadCount(user.getId(), null);
         model.addAttribute("letterUnreadCount", letterUnreadCount);
 
-        int noticeUnreadCount = messageService.findNoticeUnreadCount(user.getId(), null);
+        int noticeUnreadCount = 0;
+        noticeUnreadCount += messageService.findNoticeUnreadCount(user.getId(), TOPIC_COMMENT);
+        noticeUnreadCount += messageService.findNoticeUnreadCount(user.getId(), TOPIC_FOLLOW);
+        noticeUnreadCount += messageService.findNoticeUnreadCount(user.getId(), TOPIC_LIKE);
         model.addAttribute("noticeUnreadCount", noticeUnreadCount);
 
         return "/site/notice";

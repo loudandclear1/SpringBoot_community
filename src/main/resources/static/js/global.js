@@ -41,3 +41,29 @@ window.alert = function(message) {
 	$(".alert-box .modal-body p").text(message);
 	$(".alert-box").modal("show");
 }
+
+var socket = new WebSocket('ws://localhost:4000/community/ws/notify');
+
+socket.onmessage = function(event) {
+	var data = JSON.parse(event.data);
+	if (data.type === 'NEW_MESSAGE') {
+		addBreathingEffect();
+	} else {
+		removeBreathingEffect();
+	}
+};
+
+function addBreathingEffect() {
+	var messageLink = document.getElementById('messageLink');
+	if (messageLink) {
+		messageLink.classList.add('breathing');
+	}
+}
+
+function removeBreathingEffect() {
+	var messageLink = document.getElementById('messageLink');
+	if (messageLink) {
+		messageLink.classList.remove('breathing');
+	}
+}
+

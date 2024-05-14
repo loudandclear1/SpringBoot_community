@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.hgz.community.entity.DiscussPost;
 import com.hgz.community.entity.Event;
 import com.hgz.community.entity.Message;
+import com.hgz.community.handler.NotificationHandler;
 import com.hgz.community.service.DiscussPostService;
 import com.hgz.community.service.ElasticsearchService;
 import com.hgz.community.service.MessageService;
@@ -34,7 +35,10 @@ public class EventConsumer implements CommunityConstant {
     @Autowired
     private ElasticsearchService elasticsearchService;
 
-    @KafkaListener(topics = {TOPIC_COMMENT, TOPIC_LIKE, TOPIC_FOLLOW})
+    @Autowired
+    private NotificationHandler notificationHandler;
+
+    @KafkaListener(topics = {TOPIC_COMMENT, TOPIC_LIKE, TOPIC_FOLLOW, TOPIC_MESSAGE})
     public void handleCommentMessage(ConsumerRecord consumerRecord) {
         if (consumerRecord == null || consumerRecord.value() == null) {
             logger.error("消息的内容为空！");
@@ -65,6 +69,13 @@ public class EventConsumer implements CommunityConstant {
 
         message.setContent(JSONObject.toJSONString(content));
         messageService.addMessage(message);
+
+        // 发送 WebSocket 通知
+        try {
+            notificationHandler.notifyUser(String.valueOf(event.getEntityUserId()));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @KafkaListener(topics = {TOPIC_PUBLISH})
