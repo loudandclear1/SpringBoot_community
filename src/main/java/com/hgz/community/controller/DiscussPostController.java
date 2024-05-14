@@ -1,9 +1,7 @@
 package com.hgz.community.controller;
 
-import com.hgz.community.entity.Comment;
-import com.hgz.community.entity.DiscussPost;
-import com.hgz.community.entity.Page;
-import com.hgz.community.entity.User;
+import com.hgz.community.entity.*;
+import com.hgz.community.event.EventProducer;
 import com.hgz.community.service.CommentService;
 import com.hgz.community.service.DiscussPostService;
 import com.hgz.community.service.LikeService;
@@ -40,6 +38,9 @@ public class DiscussPostController implements CommunityConstant {
     @Autowired
     private LikeService likeService;
 
+    @Autowired
+    private EventProducer eventProducer;
+
     @RequestMapping(path = "/add", method = RequestMethod.POST)
     @ResponseBody
     public String addDiscussPost(String title, String content) {
@@ -54,6 +55,14 @@ public class DiscussPostController implements CommunityConstant {
         post.setContent(content);
         post.setCreateTime(new Date());
         discussPostService.addDiscussPost(post);
+
+        // 触发发帖事件
+        Event event = new Event()
+                .setTopic(TOPIC_PUBLISH)
+                .setUserId(user.getId())
+                .setEntityType(ENTITY_TYPE_POST)
+                .setEntityId(post.getId());
+        eventProducer.fireEvent(event);
 
         return CommunityUtil.getJSONString(0, "发布成功！");
     }
@@ -113,8 +122,8 @@ public class DiscussPostController implements CommunityConstant {
                         ENTITY_TYPE_COMMENT, comment.getId(), 0, Integer.MAX_VALUE);
                 // 回复列表详情
                 List<Map<String, Object>> replyVoList = new ArrayList<>();
-                if(replyList != null) {
-                    for(Comment reply : replyList) {
+                if (replyList != null) {
+                    for (Comment reply : replyList) {
                         Map<String, Object> replyVo = new HashMap<>();
                         // 回复
                         replyVo.put("reply", reply);
