@@ -20,6 +20,7 @@ import org.springframework.stereotype.Component;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @Component
 public class EventConsumer implements CommunityConstant {
@@ -38,7 +39,7 @@ public class EventConsumer implements CommunityConstant {
     @Autowired
     private NotificationHandler notificationHandler;
 
-    @KafkaListener(topics = {TOPIC_COMMENT, TOPIC_LIKE, TOPIC_FOLLOW, TOPIC_MESSAGE})
+    @KafkaListener(topics = {TOPIC_COMMENT, TOPIC_LIKE, TOPIC_FOLLOW, TOPIC_LETTER})
     public void handleCommentMessage(ConsumerRecord consumerRecord) {
         if (consumerRecord == null || consumerRecord.value() == null) {
             logger.error("消息的内容为空！");
@@ -48,6 +49,16 @@ public class EventConsumer implements CommunityConstant {
         Event event = JSONObject.parseObject(consumerRecord.value().toString(), Event.class);
         if (event == null) {
             logger.error("消息格式错误！");
+            return;
+        }
+
+        if (Objects.equals(event.getTopic(), TOPIC_LETTER)) {
+            // 发送 WebSocket 通知
+            try {
+                notificationHandler.notifyUser(String.valueOf(event.getEntityUserId()));
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
             return;
         }
 
@@ -70,12 +81,6 @@ public class EventConsumer implements CommunityConstant {
         message.setContent(JSONObject.toJSONString(content));
         messageService.addMessage(message);
 
-        // 发送 WebSocket 通知
-        try {
-            notificationHandler.notifyUser(String.valueOf(event.getEntityUserId()));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 
     @KafkaListener(topics = {TOPIC_PUBLISH})

@@ -38,7 +38,7 @@ public interface CommunityConstant {
     String TOPIC_PUBLISH = "publish";
 
     // 私信
-    String TOPIC_MESSAGE = "message";
+    String TOPIC_LETTER = "letter";
 
     // 系统用户ID
     int SYSTEM_USER_ID = 1;

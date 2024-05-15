@@ -153,7 +153,7 @@ public class MessageController implements CommunityConstant {
         messageService.addMessage(message);
 
         Event event = new Event()
-                .setTopic(TOPIC_MESSAGE)
+                .setTopic(TOPIC_LETTER)
                 .setUserId(hostHolder.getUser().getId())
                 .setEntityType(ENTITY_TYPE_USER)
                 .setEntityId(target.getId())
