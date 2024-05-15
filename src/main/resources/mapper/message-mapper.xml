@@ -106,6 +106,7 @@
         <if test="topic!=null">
             and conversation_id = #{topic}
         </if>
+        and conversation_id != "message"
     </select>
 
     <select id="selectNotices" resultType="Message">
