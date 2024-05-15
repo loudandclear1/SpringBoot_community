@@ -159,4 +159,64 @@ public class DiscussPostController implements CommunityConstant {
 
         return "/site/discuss-detail";
     }
+
+    @RequestMapping(path = "/top", method = RequestMethod.POST)
+    @ResponseBody
+    public String setTop(int id) {
+
+        DiscussPost post = discussPostService.findDiscussPostById(id);
+        if (post.getType() == 0) {
+            discussPostService.updateType(id, 1);
+        } else {
+            discussPostService.updateType(id, 0);
+        }
+
+        // 发帖事件 更新elasticSearch数据库
+        Event event = new Event()
+                .setTopic(TOPIC_PUBLISH)
+                .setUserId(hostHolder.getUser().getId())
+                .setEntityType(ENTITY_TYPE_POST)
+                .setEntityId(id);
+        eventProducer.fireEvent(event);
+
+        return CommunityUtil.getJSONString(0);
+    }
+
+    @RequestMapping(path = "/wonderful", method = RequestMethod.POST)
+    @ResponseBody
+    public String setWonderful(int id) {
+
+        DiscussPost post = discussPostService.findDiscussPostById(id);
+        if (post.getStatus() == 0) {
+            discussPostService.updateStatus(id, 1);
+        } else {
+            discussPostService.updateStatus(id, 0);
+        }
+
+        // 发帖事件 更新elasticSearch数据库
+        Event event = new Event()
+                .setTopic(TOPIC_PUBLISH)
+                .setUserId(hostHolder.getUser().getId())
+                .setEntityType(ENTITY_TYPE_POST)
+                .setEntityId(id);
+        eventProducer.fireEvent(event);
+
+        return CommunityUtil.getJSONString(0);
+    }
+
+    @RequestMapping(path = "/delete", method = RequestMethod.POST)
+    @ResponseBody
+    public String setDelete(int id) {
+        discussPostService.updateStatus(id, 2);
+
+        // 发帖事件 更新elasticSearch数据库
+        Event event = new Event()
+                .setTopic(TOPIC_DELETE)
+                .setUserId(hostHolder.getUser().getId())
+                .setEntityType(ENTITY_TYPE_POST)
+                .setEntityId(id);
+        eventProducer.fireEvent(event);
+
+        return CommunityUtil.getJSONString(0);
+    }
 }

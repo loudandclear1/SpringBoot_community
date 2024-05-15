@@ -29,7 +29,6 @@ public class TicketHandshakeInterceptor implements HandshakeInterceptor {
             Cookie cookie = WebUtils.getCookie(servletRequest.getServletRequest(), "ticket");
             if (cookie != null) {
                 String ticket = cookie.getValue();
-                // 这里假设 findLoginTicket 是从数据库检索 ticket 并返回关联用户的方法
                 LoginTicket loginTicket = userService.findLoginTicket(ticket);
                 if (loginTicket != null && loginTicket.getStatus() == 0 && loginTicket.getExpired().after(new Date())) {
                     User user = userService.findUserById(loginTicket.getUserId());

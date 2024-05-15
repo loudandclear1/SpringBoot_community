@@ -214,6 +214,10 @@ public class UserService implements CommunityConstant {
     public Collection<? extends GrantedAuthority> getAuthorities(int userId) {
         User user = findUserById(userId);
 
+        if (user == null) {
+            throw new RuntimeException("用户不存在！");
+        }
+
         List<GrantedAuthority> list = new ArrayList<>();
         list.add(new GrantedAuthority() {
             @Override

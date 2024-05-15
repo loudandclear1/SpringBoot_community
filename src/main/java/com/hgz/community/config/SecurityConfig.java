@@ -45,6 +45,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements Comm
                         AUTHORITY_ADMIN,
                         AUTHORITY_MODERATOR
                 )
+                .antMatchers(
+                        "/discuss/top",
+                        "/discuss/wonderful"
+                )
+                .hasAnyAuthority(
+                        AUTHORITY_MODERATOR
+                )
+                .antMatchers(
+                        "/discuss/delete"
+                )
+                .hasAnyAuthority(
+                        AUTHORITY_ADMIN
+                )
                 .anyRequest().permitAll();
 
         // 权限不够
@@ -69,6 +82,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements Comm
                     public void handle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AccessDeniedException e) throws IOException, ServletException {
                         String xRequestedWith = httpServletRequest.getHeader("x-requested-with");
                         if ("XMLHttpRequest".equals(xRequestedWith)) {
+                            System.out.println(e);
                             httpServletResponse.setContentType("application/plain;charset=utf-8");
                             PrintWriter writer = httpServletResponse.getWriter();
                             writer.write(CommunityUtil.getJSONString(403, "你没有访问此功能的权限！"));

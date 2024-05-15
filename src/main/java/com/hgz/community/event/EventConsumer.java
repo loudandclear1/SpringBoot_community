@@ -52,13 +52,14 @@ public class EventConsumer implements CommunityConstant {
             return;
         }
 
+        // 发送 WebSocket 通知
+        try {
+            notificationHandler.notifyUser(String.valueOf(event.getEntityUserId()));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
         if (Objects.equals(event.getTopic(), TOPIC_LETTER)) {
-            // 发送 WebSocket 通知
-            try {
-                notificationHandler.notifyUser(String.valueOf(event.getEntityUserId()));
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
             return;
         }
 
@@ -81,6 +82,7 @@ public class EventConsumer implements CommunityConstant {
         message.setContent(JSONObject.toJSONString(content));
         messageService.addMessage(message);
 
+
     }
 
     @KafkaListener(topics = {TOPIC_PUBLISH})
@@ -98,5 +100,21 @@ public class EventConsumer implements CommunityConstant {
 
         DiscussPost post = discussPostService.findDiscussPostById(event.getEntityId());
         elasticsearchService.saveDiscussPost(post);
+    }
+
+    @KafkaListener(topics = {TOPIC_DELETE})
+    public void handleDeleteMessage(ConsumerRecord consumerRecord) {
+        if (consumerRecord == null || consumerRecord.value() == null) {
+            logger.error("消息内容为空！");
+            return;
+        }
+
+        Event event = JSONObject.parseObject(consumerRecord.value().toString(), Event.class);
+        if (event == null) {
+            logger.error("消息的格式错误！");
+            return;
+        }
+
+        elasticsearchService.deleteDiscussPost(event.getEntityId());
     }
 }

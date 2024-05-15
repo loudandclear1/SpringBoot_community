@@ -18,7 +18,11 @@ public class NotificationHandler extends TextWebSocketHandler {
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        String userId = session.getAttributes().get("userId").toString();
+        Object obj = session.getAttributes().get("userId");
+        String userId = "";
+        if(obj != null) {
+            userId = obj.toString();
+        }
         sessions.put(userId, session);
     }
 

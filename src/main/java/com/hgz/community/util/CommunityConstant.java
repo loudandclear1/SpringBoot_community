@@ -37,6 +37,9 @@ public interface CommunityConstant {
     // 发布帖子
     String TOPIC_PUBLISH = "publish";
 
+    // 删除帖子
+    String TOPIC_DELETE = "delete";
+
     // 私信
     String TOPIC_LETTER = "letter";
 
