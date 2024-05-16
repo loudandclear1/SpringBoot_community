@@ -1,6 +1,6 @@
 package com.hgz.community.config;
 
-import com.hgz.community.quartz.testJob;
+import com.hgz.community.quartz.PostScoreRefreshJob;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.springframework.context.annotation.Bean;
@@ -11,26 +11,26 @@ import org.springframework.scheduling.quartz.SimpleTriggerFactoryBean;
 @Configuration
 public class QuartzConfig {
 
-//    @Bean
-//    public JobDetailFactoryBean testJobDetail() {
-//        JobDetailFactoryBean factoryBean = new JobDetailFactoryBean();
-//        factoryBean.setJobClass(testJob.class);
-//        factoryBean.setName("testJob");
-//        factoryBean.setGroup("testJobGroup");
-//        factoryBean.setDurability(true);
-//        factoryBean.setRequestsRecovery(true);
-//        return factoryBean;
-//    }
-//
-//    @Bean
-//    public SimpleTriggerFactoryBean testTrigger(JobDetail testJobDetail) {
-//        SimpleTriggerFactoryBean factoryBean = new SimpleTriggerFactoryBean();
-//        factoryBean.setJobDetail(testJobDetail);
-//        factoryBean.setName("testTrigger");
-//        factoryBean.setGroup("testTriggerGroup");
-//        factoryBean.setRepeatInterval(3000);
-//        factoryBean.setJobDataMap(new JobDataMap());
-//        return factoryBean;
-//    }
+    @Bean
+    public JobDetailFactoryBean testJobDetail() {
+        JobDetailFactoryBean factoryBean = new JobDetailFactoryBean();
+        factoryBean.setJobClass(PostScoreRefreshJob.class);
+        factoryBean.setName("postScoreRefreshJob");
+        factoryBean.setGroup("communityJobGroup");
+        factoryBean.setDurability(true);
+        factoryBean.setRequestsRecovery(true);
+        return factoryBean;
+    }
+
+    @Bean
+    public SimpleTriggerFactoryBean testTrigger(JobDetail testJobDetail) {
+        SimpleTriggerFactoryBean factoryBean = new SimpleTriggerFactoryBean();
+        factoryBean.setJobDetail(testJobDetail);
+        factoryBean.setName("postScoreRefreshTrigger");
+        factoryBean.setGroup("communityTriggerGroup");
+        factoryBean.setRepeatInterval(1000 * 3600 * 2);
+        factoryBean.setJobDataMap(new JobDataMap());
+        return factoryBean;
+    }
 
 }
