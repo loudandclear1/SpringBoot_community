@@ -1,5 +1,8 @@
 package com.hgz.community.controller;
 
+import com.aliyun.oss.OSS;
+import com.aliyun.oss.OSSClient;
+import com.aliyun.oss.model.CannedAccessControlList;
 import com.hgz.community.annotation.LoginRequired;
 import com.hgz.community.dao.UserMapper;
 import com.hgz.community.entity.User;
@@ -26,10 +29,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 
 @Controller
 @RequestMapping("/user")
@@ -57,6 +57,21 @@ public class UserController implements CommunityConstant {
     @Autowired
     private FollowService followService;
 
+    @Value("${aliyun.oss.file.keyId}")
+    private String accessKey;
+
+    @Value("${aliyun.oss.file.keySecret}")
+    private String secretKey;
+
+    @Value("${aliyun.oss.file.bucketName}")
+    private String headerBucketName;
+
+    @Value("${aliyun.oss.file.url}")
+    private String headerBucketUrl;
+
+    @Value("${aliyun.oss.file.endPoint}")
+    private String endPoint;
+
     @LoginRequired
     @RequestMapping(path = "/setting", method = RequestMethod.GET)
     public String getSettingPage() {
@@ -79,40 +94,21 @@ public class UserController implements CommunityConstant {
         }
 
         fileName = CommunityUtil.generationUUID() + suffix;
-        File dest = new File(uploadPath + "/" + fileName);
+        OSS ossClient = new OSSClient(endPoint, accessKey, secretKey);
         try {
-            headerImage.transferTo(dest);
+            InputStream inputStream = headerImage.getInputStream();
+            ossClient.putObject(headerBucketName, fileName, inputStream);
+            ossClient.setObjectAcl(headerBucketName, fileName, CannedAccessControlList.PublicRead);
         } catch (IOException e) {
             logger.error("上传文件失败：" + e.getMessage());
             throw new RuntimeException("上传文件失败，服务器发生异常！");
         }
 
-        User user = hostHolder.getUser();
-        String headUrl = domain + contextPath + "/user/header/" + fileName;
-        userService.updateHeader(user.getId(), headUrl);
+        String headerUrl = "https://" + headerBucketName + "." + endPoint + "/" + fileName;
+        userService.updateHeader(hostHolder.getUser().getId(), headerUrl);
+        ossClient.shutdown();
 
         return "redirect:/index";
-    }
-
-    @RequestMapping(path = "/header/{fileName}", method = RequestMethod.GET)
-    public void getHeader(@PathVariable("fileName") String fileName, HttpServletResponse response) {
-
-        String suffix = fileName.substring(fileName.lastIndexOf("."));
-        fileName = uploadPath + "/" + fileName;
-
-        response.setContentType("image/" + suffix);
-        try (
-                FileInputStream fis = new FileInputStream(fileName);
-                OutputStream os = response.getOutputStream()
-        ) {
-            byte[] buffer = new byte[1024];
-            int b = 0;
-            while ((b = fis.read(buffer)) != -1) {
-                os.write(buffer, 0, b);
-            }
-        } catch (IOException e) {
-            logger.error("读取头像失败" + e.getMessage());
-        }
     }
 
     @LoginRequired
