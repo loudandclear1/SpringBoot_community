@@ -4,8 +4,10 @@ import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSClient;
 import com.aliyun.oss.model.CannedAccessControlList;
 import com.hgz.community.annotation.LoginRequired;
-import com.hgz.community.dao.UserMapper;
+import com.hgz.community.entity.DiscussPost;
+import com.hgz.community.entity.Page;
 import com.hgz.community.entity.User;
+import com.hgz.community.service.DiscussPostService;
 import com.hgz.community.service.FollowService;
 import com.hgz.community.service.LikeService;
 import com.hgz.community.service.UserService;
@@ -18,9 +20,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,22 +27,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/user")
 public class UserController implements CommunityConstant {
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
-
-    @Value("${community.path.upload}")
-    private String uploadPath;
-
-    @Value("${community.path.domain}")
-    private String domain;
-
-    @Value("${server.servlet.context-path}")
-    private String contextPath;
 
     @Autowired
     private UserService userService;
@@ -57,6 +50,9 @@ public class UserController implements CommunityConstant {
     @Autowired
     private FollowService followService;
 
+    @Autowired
+    private DiscussPostService discussPostService;
+
     @Value("${aliyun.oss.file.keyId}")
     private String accessKey;
 
@@ -65,9 +61,6 @@ public class UserController implements CommunityConstant {
 
     @Value("${aliyun.oss.file.bucketName}")
     private String headerBucketName;
-
-    @Value("${aliyun.oss.file.url}")
-    private String headerBucketUrl;
 
     @Value("${aliyun.oss.file.endPoint}")
     private String endPoint;
@@ -174,5 +167,49 @@ public class UserController implements CommunityConstant {
         model.addAttribute("hasFollowed", hasFollowered);
 
         return "/site/profile";
+    }
+
+    @RequestMapping(path = "/my-post/{userId}", method = RequestMethod.GET)
+    public String getMyPostPage(@PathVariable("userId") int userId, Model model, Page page) {
+        User user = userService.findUserById(userId);
+        if (user == null) {
+            throw new RuntimeException("该用户不存在！");
+        }
+        model.addAttribute("user", user);
+
+        // 发帖数量统计
+        int postCount = discussPostService.findDiscussPostRows(userId);
+        model.addAttribute("postCount", postCount);
+
+        page.setRows(postCount);
+        page.setPath("/user/my-post/" + userId);
+        page.setLimit(5);
+
+        List<DiscussPost> postList = discussPostService.findDiscussPosts(userId, page.getOffset(), page.getLimit(), 0);
+        List<Map<String, Object>> postVoList = new ArrayList<>();
+        if (postList != null) {
+            for (DiscussPost post : postList) {
+                Map<String, Object> postVo = new HashMap<>();
+                postVo.put("post", post);
+                postVo.put("like", likeService.findEntityLikeCount(ENTITY_TYPE_POST, post.getId()));
+                postVoList.add(postVo);
+            }
+        }
+
+        model.addAttribute("postVoList", postVoList);
+
+        return "/site/my-post";
+    }
+
+    @RequestMapping(path = "/my-reply/{userId}", method = RequestMethod.GET)
+    public String getMyReplyPage(@PathVariable("userId") int userId, Model model) {
+        User user = userService.findUserById(userId);
+        if (user == null) {
+            throw new RuntimeException("该用户不存在！");
+        }
+
+        model.addAttribute("user", user);
+
+        return "/site/my-reply";
     }
 }
