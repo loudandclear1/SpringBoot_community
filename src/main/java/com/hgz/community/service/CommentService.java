@@ -25,6 +25,10 @@ public class CommentService implements CommunityConstant {
     @Autowired
     private DiscussPostService discussPostService;
 
+    public List<Comment> findCommentsByUserId(int userId) {
+        return commentMapper.selectCommentsByUserId(userId);
+    }
+
     public List<Comment> findCommentsByEntity(int entityType, int entityId, int offset, int limit) {
         return commentMapper.selectCommentsByEntity(entityType, entityId, offset, limit);
     }
@@ -35,7 +39,7 @@ public class CommentService implements CommunityConstant {
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public int addComment(Comment comment) {
-        if(comment == null) {
+        if (comment == null) {
             throw new IllegalArgumentException("参数不能为空！");
         }
 
@@ -43,7 +47,7 @@ public class CommentService implements CommunityConstant {
         comment.setContent(sensitiveFilter.filter(comment.getContent()));
         int rows = commentMapper.insertComment(comment);
 
-        if(comment.getEntityType() == ENTITY_TYPE_POST) {
+        if (comment.getEntityType() == ENTITY_TYPE_POST) {
             int count = commentMapper.selectCountByEntity(comment.getEntityType(), comment.getEntityId());
             discussPostService.updateCommentCount(comment.getEntityId(), count);
         }
@@ -54,4 +58,5 @@ public class CommentService implements CommunityConstant {
     public Comment findCommentById(int id) {
         return commentMapper.selectCommentById(id);
     }
+
 }

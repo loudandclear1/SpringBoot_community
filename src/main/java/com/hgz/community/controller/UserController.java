@@ -4,13 +4,11 @@ import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSClient;
 import com.aliyun.oss.model.CannedAccessControlList;
 import com.hgz.community.annotation.LoginRequired;
+import com.hgz.community.entity.Comment;
 import com.hgz.community.entity.DiscussPost;
 import com.hgz.community.entity.Page;
 import com.hgz.community.entity.User;
-import com.hgz.community.service.DiscussPostService;
-import com.hgz.community.service.FollowService;
-import com.hgz.community.service.LikeService;
-import com.hgz.community.service.UserService;
+import com.hgz.community.service.*;
 import com.hgz.community.util.CommunityConstant;
 import com.hgz.community.util.CommunityUtil;
 import com.hgz.community.util.HostHolder;
@@ -28,10 +26,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @RequestMapping("/user")
@@ -52,6 +47,9 @@ public class UserController implements CommunityConstant {
 
     @Autowired
     private DiscussPostService discussPostService;
+
+    @Autowired
+    private CommentService commentService;
 
     @Value("${aliyun.oss.file.keyId}")
     private String accessKey;
@@ -202,13 +200,50 @@ public class UserController implements CommunityConstant {
     }
 
     @RequestMapping(path = "/my-reply/{userId}", method = RequestMethod.GET)
-    public String getMyReplyPage(@PathVariable("userId") int userId, Model model) {
+    public String getMyReplyPage(@PathVariable("userId") int userId, Model model, Page page) {
         User user = userService.findUserById(userId);
         if (user == null) {
             throw new RuntimeException("该用户不存在！");
         }
-
         model.addAttribute("user", user);
+
+        // 查找用户的所有评论
+        List<Comment> commentList = commentService.findCommentsByUserId(userId);
+        // 返回给model的
+        List<Map<String, Object>> commentVoList = new ArrayList<>();
+        // comment 中评论类型是帖子 post id集合
+        Set<Integer> postIds = new HashSet<>();
+        // 帖子id 和用户最新评论的映射关系
+        Map<Integer, Comment> postLastComment = new HashMap<>();
+        if (commentList != null) {
+            for (Comment comment : commentList) {
+                if (comment.getEntityType() == ENTITY_TYPE_POST) {
+                    postIds.add(comment.getEntityId());
+                    postLastComment.put(comment.getEntityId(), comment);
+                }
+            }
+        }
+
+        // 评论数量统计
+        int commentCount = postIds.size();
+        model.addAttribute("commentCount", commentCount);
+
+        page.setRows(commentCount);
+        page.setPath("/user/my-reply/" + userId);
+        page.setLimit(5);
+
+        if (postIds != null) {
+            for (int id : postIds) {
+                DiscussPost post = discussPostService.findDiscussPostById(id);
+                if (post != null) {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("post", post);
+                    map.put("comment", postLastComment.get(id));
+                    commentVoList.add(map);
+                }
+            }
+        }
+        model.addAttribute("commentVoList", commentVoList);
 
         return "/site/my-reply";
     }

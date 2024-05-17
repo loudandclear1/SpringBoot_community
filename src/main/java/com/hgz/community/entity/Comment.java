@@ -6,12 +6,16 @@ public class Comment {
 
     // 评论的id
     private int id;
+
+    // 评论用户id
     private int userId;
 
     // 评论对象的类型
     private int entityType;
     // 评论对象的id
     private int entityId;
+
+    // 评论对象用户id
     private int targetId;
     private String content;
     private int status;
