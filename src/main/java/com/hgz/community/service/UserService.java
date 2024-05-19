@@ -88,7 +88,7 @@ public class UserService implements CommunityConstant {
         user.setType(0);
         user.setStatus(0);
         user.setActivationCode(CommunityUtil.generationUUID());
-        user.setHeaderUrl(String.format("https://hgzcommunity.oss-cn-beijing.aliyuncs.com/unknown.jpg", new Random().nextInt(1000)));
+        user.setHeaderUrl("https://hgzcommunity.oss-cn-beijing.aliyuncs.com/unknown.jpg");
         user.setCreateTime(new Date());
         userMapper.insertUser(user);
 
