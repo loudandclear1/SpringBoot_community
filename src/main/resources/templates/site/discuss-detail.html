@@ -22,10 +22,7 @@
 			<!-- 导航 -->
 			<nav class="navbar navbar-expand-lg navbar-dark">
 				<!-- logo -->
-				<a class="navbar-brand" href="#"></a>
-				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-					<span class="navbar-toggler-icon"></span>
-				</button>
+				<a th:href="@{/index}" style="color: white; font-size: 20px">社区</a>
 				<!-- 功能 -->
 				<div class="collapse navbar-collapse" id="navbarSupportedContent">
 					<ul class="navbar-nav mr-auto">
@@ -208,6 +205,7 @@
 										<input type="text" class="input-size" name="content" placeholder="请输入你的观点"/>
 										<input type="hidden" name="entityType" value="2">
 										<input type="hidden" name="entityId" th:value="${cvo.comment.id}">
+										<input type="hidden" name="targetId" th:value="${cvo.comment.userId}">
 									</div>
 									<div class="text-right mt-2">
 										<button type="submit" class="btn btn-primary btn-sm" onclick="#">&nbsp;&nbsp;回&nbsp;&nbsp;复&nbsp;&nbsp;</button>
@@ -241,6 +239,7 @@
 					<textarea placeholder="在这里畅所欲言你的看法吧!" name="content"></textarea>
 					<input type="hidden" name="entityType" value="1">
 					<input type="hidden" name="entityId" th:value="${post.id}">
+					<input type="hidden" name="targetId" th:value="${post.userId}">
 				</p>
 				<p class="text-right">
 					<button type="submit" class="btn btn-primary btn-sm">&nbsp;&nbsp;回&nbsp;&nbsp;帖&nbsp;&nbsp;</button>
@@ -255,33 +254,14 @@
 			<div class="row">
 				<!-- 二维码 -->
 				<div class="col-4 qrcode">
-					<img src="https://uploadfiles.nowcoder.com/app/app_download.png" class="img-thumbnail" style="width:136px;" />
+					<img src="https://hgzcommunity.oss-cn-beijing.aliyuncs.com/wechatCode.jpg" class="img-thumbnail" style="width:136px;" />
 				</div>
-				<!-- 公司信息 -->
 				<div class="col-8 detail-info">
 					<div class="row">
 						<div class="col">
 							<ul class="nav">
 								<li class="nav-item">
-									<a class="nav-link text-light" href="#">关于我们</a>
-								</li>
-								<li class="nav-item">
-									<a class="nav-link text-light" href="#">加入我们</a>
-								</li>
-								<li class="nav-item">
-									<a class="nav-link text-light" href="#">意见反馈</a>
-								</li>
-								<li class="nav-item">
-									<a class="nav-link text-light" href="#">企业服务</a>
-								</li>
-								<li class="nav-item">
-									<a class="nav-link text-light" href="#">联系我们</a>
-								</li>
-								<li class="nav-item">
-									<a class="nav-link text-light" href="#">免责声明</a>
-								</li>
-								<li class="nav-item">
-									<a class="nav-link text-light" href="#">友情链接</a>
+									<span class="nav-link text-light">本项目仅供学习，<a style="color: white; font-size: 12px" href="https://github.com/loudandclear1/SpringBoot_community">开源代码仓库地址</a></span>
 								</li>
 							</ul>
 						</div>
@@ -290,18 +270,10 @@
 						<div class="col">
 							<ul class="nav btn-group-vertical company-info">
 								<li class="nav-item text-white-50">
-									公司地址：北京市朝阳区大屯路东金泉时代3-2708北京牛客科技有限公司
+									联系方式：13252756903(电话)
 								</li>
 								<li class="nav-item text-white-50">
-									联系方式：010-60728802(电话)&nbsp;&nbsp;&nbsp;&nbsp;admin@nowcoder.com
-								</li>
-								<li class="nav-item text-white-50">
-									牛客科技©2018 All rights reserved
-								</li>
-								<li class="nav-item text-white-50">
-									京ICP备14055008号-4 &nbsp;&nbsp;&nbsp;&nbsp;
-									<img src="http://static.nowcoder.com/company/images/res/ghs.png" style="width:18px;" />
-									京公网安备 11010502036488号
+									联系方式：2296162801@qq.com(邮箱)
 								</li>
 							</ul>
 						</div>
