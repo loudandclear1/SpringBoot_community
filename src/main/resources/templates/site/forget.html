@@ -78,7 +78,7 @@
 							</div>
 						</div>
 						<div class="col-sm-4">
-							<a href="javascript:;" class="btn btn-info form-control">获取验证码</a>
+							<a href="javascript:;" class="btn btn-info form-control" id="get-verify-code">获取验证码</a>
 						</div>
 					</div>	
 					<div class="form-group row mt-4">
@@ -140,5 +140,31 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" crossorigin="anonymous"></script>
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" crossorigin="anonymous"></script>
 	<script th:src="@{/js/global.js}"></script>
+	<script>
+		document.addEventListener('DOMContentLoaded', function() {
+			const getCodeBtn = document.getElementById('get-verify-code');
+			let timer = null;
+			let timeLeft = 60;
+
+			getCodeBtn.addEventListener('click', function() {
+				if (getCodeBtn.disabled) {
+					return;
+				}
+				getCodeBtn.disabled = true;
+				getCodeBtn.innerText = `重新获取(${timeLeft}s)`;
+
+				timer = setInterval(() => {
+					timeLeft--;
+					getCodeBtn.innerText = `重新获取(${timeLeft}s)`;
+					if (timeLeft <= 0) {
+						clearInterval(timer);
+						getCodeBtn.disabled = false;
+						getCodeBtn.innerText = '获取验证码';
+					}
+				}, 1000); // 每秒更新时间
+			});
+		});
+	</script>
+
 </body>
 </html>

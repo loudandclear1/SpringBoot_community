@@ -160,4 +160,9 @@ public class LoginController implements CommunityConstant {
     public String getForgetPage() {
         return "/site/forget";
     }
+
+    @RequestMapping(path = "/forget", method = RequestMethod.POST)
+    public String forget(String email, String code, String password, Model model) {
+        return null;
+    }
 }
