@@ -12,7 +12,7 @@ import org.springframework.scheduling.quartz.SimpleTriggerFactoryBean;
 public class QuartzConfig {
 
     @Bean
-    public JobDetailFactoryBean testJobDetail() {
+    public JobDetailFactoryBean postScoreRefreshJobDetail() {
         JobDetailFactoryBean factoryBean = new JobDetailFactoryBean();
         factoryBean.setJobClass(PostScoreRefreshJob.class);
         factoryBean.setName("postScoreRefreshJob");
@@ -23,9 +23,9 @@ public class QuartzConfig {
     }
 
     @Bean
-    public SimpleTriggerFactoryBean testTrigger(JobDetail testJobDetail) {
+    public SimpleTriggerFactoryBean postScoreRefreshTrigger(JobDetail postScoreRefreshJobDetail) {
         SimpleTriggerFactoryBean factoryBean = new SimpleTriggerFactoryBean();
-        factoryBean.setJobDetail(testJobDetail);
+        factoryBean.setJobDetail(postScoreRefreshJobDetail);
         factoryBean.setName("postScoreRefreshTrigger");
         factoryBean.setGroup("communityTriggerGroup");
         factoryBean.setRepeatInterval(1000 * 3600 * 2);
