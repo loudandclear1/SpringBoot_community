@@ -155,4 +155,9 @@ public class LoginController implements CommunityConstant {
         SecurityContextHolder.clearContext();
         return "redirect:/login";
     }
+
+    @RequestMapping(path = "/forget", method = RequestMethod.GET)
+    public String getForgetPage() {
+        return "/site/forget";
+    }
 }

@@ -6,6 +6,7 @@ import com.hgz.community.service.ElasticsearchService;
 import com.hgz.community.service.LikeService;
 import com.hgz.community.service.UserService;
 import com.hgz.community.util.CommunityConstant;
+import com.hgz.community.util.HostHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -29,9 +30,16 @@ public class SearchController implements CommunityConstant {
     @Autowired
     private LikeService likeService;
 
+    @Autowired
+    private HostHolder hostHolder;
+
     // search?keyword=xxx
     @RequestMapping(path = "/search", method = RequestMethod.GET)
     public String search(String keyword, Page page, Model model) {
+        if (hostHolder.getUser() == null) {
+            return "redirect:/login";
+        }
+
         // 这样写避免和自己定义的Page冲突
         org.springframework.data.domain.Page<DiscussPost> searchResult =
                 elasticsearchService.searchDiscussPost(keyword, page.getCurrent() - 1, page.getLimit());
