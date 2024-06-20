@@ -59,7 +59,19 @@ public class LoginController implements CommunityConstant {
     }
 
     @RequestMapping(path = "/register", method = RequestMethod.POST)
-    public String register(Model model, User user) {
+    public String register(Model model, User user, String code,
+                           @CookieValue("kaptchaOwner") String kaptchaOwner) {
+        // 得到验证码， 判断是否存在
+        String kaptcha = null;
+        if (!StringUtils.isBlank(kaptchaOwner)) {
+            String redisKey = RedisKeyUtil.getKaptchaKey(kaptchaOwner);
+            kaptcha = (String) redisTemplate.opsForValue().get(redisKey);
+        }
+        if (StringUtils.isBlank(kaptcha) || StringUtils.isBlank(code) || !kaptcha.equalsIgnoreCase(code)) {
+            model.addAttribute("codeMsg", "验证码不正确！");
+            return "/site/register";
+        }
+
         Map<String, Object> map = userService.register(user);
         if (map == null || map.isEmpty()) {
             model.addAttribute("msg", "注册成功，我们已经向您的邮箱发送了一封激活邮件，请尽快激活！");
