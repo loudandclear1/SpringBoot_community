@@ -103,6 +103,10 @@ public class UserService implements CommunityConstant {
         return map;
     }
 
+    public Map<String, Object> forgetPassword(String email) {
+        return null;
+    }
+
     public int activation(int userId, String code) {
         // 注册后用户数据未存入redis
         // 而且激活要修改数据，会删除redis中的用户数据，没必要从redis中查找
