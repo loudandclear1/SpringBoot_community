@@ -103,10 +103,6 @@ public class UserService implements CommunityConstant {
         return map;
     }
 
-    public Map<String, Object> forgetPassword(String email) {
-        return null;
-    }
-
     public int activation(int userId, String code) {
         // 注册后用户数据未存入redis
         // 而且激活要修改数据，会删除redis中的用户数据，没必要从redis中查找
@@ -189,10 +185,24 @@ public class UserService implements CommunityConstant {
         return rows;
     }
 
-    public int updatePassword(int userId, String password, String salt) {
-        int rows = userMapper.updatePassword(userId, CommunityUtil.md5(password + salt));
-        clearCache(userId);
-        return rows;
+    public Map<String, Object> updatePassword(User user, String oldPassword, String newPassword) {
+        Map<String, Object> result = new HashMap<>();
+
+        String oldPassword_md5 = CommunityUtil.md5(oldPassword + user.getSalt());
+        if (!Objects.equals(oldPassword_md5, user.getPassword())) {
+            result.put("oldPasswordMsg", "旧密码不正确！");
+            return result;
+        }
+
+        String newPassword_md5 = CommunityUtil.md5(newPassword + user.getSalt());
+        userMapper.updatePassword(user.getId(), newPassword_md5);
+        clearCache(user.getId());
+        return result;
+    }
+
+    public void forgetPassword(User user, String newPassword) {
+        String newPassword_md5 = CommunityUtil.md5(newPassword + user.getSalt());
+        userMapper.updatePassword(user.getId(), newPassword_md5);
     }
 
     // 1.优先查询缓存cache
@@ -238,5 +248,20 @@ public class UserService implements CommunityConstant {
         });
 
         return list;
+    }
+
+    public User getUserByEmail(String email) {
+        return userMapper.selectByEmail(email);
+    }
+
+    public void sendForgetEmail(String email, String code) {
+
+        // 发送激活账号邮件
+        Context context = new Context();
+        context.setVariable("email", email);
+        context.setVariable("code", code);
+        String content = templateEngine.process("/mail/forget", context);
+        mailClient.sendMail(email, "忘记账号密码", content);
+
     }
 }

@@ -119,20 +119,21 @@ public class UserController implements CommunityConstant {
         }
 
         User user = hostHolder.getUser();
-        String userPassword = user.getPassword();
-        String salt = user.getSalt();
-        String oldPassword_Salt = oldPassword + salt;
-        String oldPassword_md5 = CommunityUtil.md5(oldPassword_Salt);
 
-        if (oldPassword_md5 != null && !oldPassword_md5.equals(userPassword)) {
-            model.addAttribute("oldPasswordMsg", "原始密码不正确！");
+        Map<String, Object> map = userService.updatePassword(user, oldPassword, newPassword);
+
+        if (!map.isEmpty()) {
+            for (Map.Entry<String, Object> m : map.entrySet()) {
+                model.addAttribute(m.getKey(), m.getValue());
+            }
             return "/site/setting";
         }
 
-        userService.updatePassword(user.getId(), newPassword, salt);
+        model.addAttribute("msg", "您的账号密码已经修改成！");
+        model.addAttribute("target", "/login");
         userService.logout(ticket);
 
-        return "redirect:/login";
+        return "/site/operate-result";
     }
 
     // 个人主页 userId 不一定是自己的id，可能是看别人的个人主页

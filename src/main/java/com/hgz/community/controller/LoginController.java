@@ -15,10 +15,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.Cookie;
@@ -28,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -175,11 +173,53 @@ public class LoginController implements CommunityConstant {
 
     @RequestMapping(path = "/forget", method = RequestMethod.POST)
     public String forget(String email, String code, String password, Model model) {
-        return null;
+
+        // 防止有人捣乱，做好安全后端
+        if (StringUtils.isBlank(email)) {
+            model.addAttribute("emailMsg", "邮箱不能为空");
+            return "/site/forget";
+        }
+        String redisKey = RedisKeyUtil.getCodeKey(email);
+        String redisCode = (String) redisTemplate.opsForValue().get(redisKey);
+
+        if (StringUtils.isBlank(code) || StringUtils.isBlank(redisCode) || !redisCode.equals(code)) {
+            model.addAttribute("codeMsg", "验证码不正确！");
+            return "/site/forget";
+        }
+
+        userService.forgetPassword(userService.getUserByEmail(email), password);
+
+        model.addAttribute("msg", "您的账号密码已经重置！");
+        model.addAttribute("target", "/login");
+        return "/site/operate-result";
     }
 
     @RequestMapping(path = "/getCode", method = RequestMethod.GET)
-    public String getCode() {
-        return null;
+    @ResponseBody
+    public Map<String, Object> getCode(String email) {
+
+        Map<String, Object> result = new HashMap<>();
+
+        if (StringUtils.isBlank(email)) {
+            result.put("code", 1);
+            result.put("emailMsg", "邮箱不能为空！");
+            return result;
+        }
+
+        User user = userService.getUserByEmail(email);
+        if (user == null) {
+            result.put("code", 1);
+            result.put("emailMsg", "该邮箱未注册！");
+            return result;
+        }
+
+        String redisKey = RedisKeyUtil.getCodeKey(email);
+        String code = CommunityUtil.generationUUID().substring(0, 4);
+        redisTemplate.opsForValue().set(redisKey, code, 60, TimeUnit.SECONDS);
+
+        userService.sendForgetEmail(email, code);
+
+        result.put("code", 0);
+        return result;
     }
 }

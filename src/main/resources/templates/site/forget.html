@@ -1,173 +1,217 @@
 <!doctype html>
 <html lang="en">
 <head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-	<link rel="icon" href="https://hgzcommunity.oss-cn-beijing.aliyuncs.com/logo.jpg"/>
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" crossorigin="anonymous">
-	<link rel="stylesheet" th:href="@{/css/global.css}" />
-	<link rel="stylesheet" th:href="@{/css/login.css}" />
-	<title>忘记密码</title>
+    <meta charset="utf-8">
+
+    <!--访问该页面时,在此处生成CSRF令牌.-->
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="icon" href="https://hgzcommunity.oss-cn-beijing.aliyuncs.com/logo.jpg"/>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          crossorigin="anonymous">
+    <link rel="stylesheet" th:href="@{/css/global.css}"/>
+    <link rel="stylesheet" th:href="@{/css/login.css}"/>
+    <title>忘记密码</title>
 </head>
 <body>
-	<div class="nk-container">
-		<!-- 头部 -->
-		<header class="bg-dark sticky-top" th:replace="index::header">
-			<div class="container">
-				<!-- 导航 -->
-				<nav class="navbar navbar-expand-lg navbar-dark">
-					<!-- logo -->
-					<a th:href="@{/index}" style="color: white; font-size: 20px">社区</a>
-					<!-- 功能 -->
-					<div class="collapse navbar-collapse" id="navbarSupportedContent">
-						<ul class="navbar-nav mr-auto">
-							<li class="nav-item ml-3 btn-group-vertical">
-								<a class="nav-link" href="../index.html">首页</a>
-							</li>
-							<li class="nav-item ml-3 btn-group-vertical">
-								<a class="nav-link position-relative" href="letter.html">消息<span class="badge badge-danger">12</span></a>
-							</li>
-							<li class="nav-item ml-3 btn-group-vertical">
-								<a class="nav-link" href="register.html">注册</a>
-							</li>
-							<li class="nav-item ml-3 btn-group-vertical">
-								<a class="nav-link" href="login.html">登录</a>
-							</li>
-							<li class="nav-item ml-3 btn-group-vertical dropdown">
-								<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-									<img src="http://images.nowcoder.com/head/1t.png" class="rounded-circle" style="width:30px;"/>
-								</a>
-								<div class="dropdown-menu" aria-labelledby="navbarDropdown">
-									<a class="dropdown-item text-center" href="profile.html">个人主页</a>
-									<a class="dropdown-item text-center" href="setting.html">账号设置</a>
-									<a class="dropdown-item text-center" href="login.html">退出登录</a>
-									<div class="dropdown-divider"></div>
-									<span class="dropdown-item text-center text-secondary">nowcoder</span>
-								</div>
-							</li>
-						</ul>
-						<!-- 搜索 -->
-						<form class="form-inline my-2 my-lg-0" action="search.html">
-							<input class="form-control mr-sm-2" type="search" aria-label="Search" />
-							<button class="btn btn-outline-light my-2 my-sm-0" type="submit">搜索</button>
-						</form>
-					</div>
-				</nav>
-			</div>
-		</header>
+<div class="nk-container">
+    <!-- 头部 -->
+    <header class="bg-dark sticky-top" th:replace="index::header">
+        <div class="container">
+            <!-- 导航 -->
+            <nav class="navbar navbar-expand-lg navbar-dark">
+                <!-- logo -->
+                <a th:href="@{/index}" style="color: white; font-size: 20px">社区</a>
+                <!-- 功能 -->
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item ml-3 btn-group-vertical">
+                            <a class="nav-link" href="../index.html">首页</a>
+                        </li>
+                        <li class="nav-item ml-3 btn-group-vertical">
+                            <a class="nav-link position-relative" href="letter.html">消息<span
+                                    class="badge badge-danger">12</span></a>
+                        </li>
+                        <li class="nav-item ml-3 btn-group-vertical">
+                            <a class="nav-link" href="register.html">注册</a>
+                        </li>
+                        <li class="nav-item ml-3 btn-group-vertical">
+                            <a class="nav-link" href="login.html">登录</a>
+                        </li>
+                        <li class="nav-item ml-3 btn-group-vertical dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <img src="http://images.nowcoder.com/head/1t.png" class="rounded-circle"
+                                     style="width:30px;"/>
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item text-center" href="profile.html">个人主页</a>
+                                <a class="dropdown-item text-center" href="setting.html">账号设置</a>
+                                <a class="dropdown-item text-center" href="login.html">退出登录</a>
+                                <div class="dropdown-divider"></div>
+                                <span class="dropdown-item text-center text-secondary">nowcoder</span>
+                            </div>
+                        </li>
+                    </ul>
+                    <!-- 搜索 -->
+                    <form class="form-inline my-2 my-lg-0" action="search.html">
+                        <input class="form-control mr-sm-2" type="search" aria-label="Search"/>
+                        <button class="btn btn-outline-light my-2 my-sm-0" type="submit">搜索</button>
+                    </form>
+                </div>
+            </nav>
+        </div>
+    </header>
 
-		<!-- 内容 -->
-		<div class="main">
-			<div class="container pl-5 pr-5 pt-3 pb-3 mt-3 mb-3">
-				<form class="mt-5">				
-					<div class="form-group row">
-						<label for="your-email" class="col-sm-2 col-form-label text-right">邮箱:</label>
-						<div class="col-sm-10">
-							<input type="email" class="form-control" id="your-email" placeholder="请输入您的邮箱!" required
-								   th:value="${param.email}">
-							<div class="invalid-feedback" th:text="${emailMsg}">
-								该邮箱已被注册!
-							</div>
-						</div>
-					</div>
-					<div class="form-group row mt-4">
-						<label for="verifycode" class="col-sm-2 col-form-label text-right">验证码:</label>
-						<div class="col-sm-6">
-							<input type="text" class="form-control" id="verifycode" placeholder="请输入验证码!"
-								   th:value="${param.code}">
-							<div class="invalid-feedback" th:text="${codeMsg}">
-								验证码不正确!
-							</div>
-						</div>
-						<div class="col-sm-4">
-							<a href="javascript:;" class="btn btn-info form-control" id="get-verify-code">获取验证码</a>
-						</div>
-					</div>	
-					<div class="form-group row mt-4">
-						<label for="your-password" class="col-sm-2 col-form-label text-right">新密码:</label>
-						<div class="col-sm-10">
-							<input type="password" class="form-control" id="your-password" placeholder="请输入新的密码!" required
-								   th:value="${param.password}">
-							<div class="invalid-feedback" th:text="${passwordMsg}">
-								密码长度不能小于8位!
-							</div>							
-						</div>
-					</div>							
-					<div class="form-group row mt-4">
-						<div class="col-sm-2"></div>
-						<div class="col-sm-10 text-center">
-							<button type="submit" class="btn btn-info text-white form-control">重置密码</button>
-						</div>
-					</div>
-				</form>				
-			</div>
-		</div>
+    <!-- 内容 -->
+    <div class="main">
+        <div class="container pl-5 pr-5 pt-3 pb-3 mt-3 mb-3">
+            <form class="mt-5" method="post" th:action="@{/forget}">
+                <div class="form-group row">
+                    <label for="your-email" class="col-sm-2 col-form-label text-right">邮箱:</label>
+                    <div class="col-sm-10">
+                        <input type="email" th:class="|form-control ${emailMsg!=null?'is-invalid':''}|" id="your-email" placeholder="请输入您的邮箱!" required
+                               th:value="${param.email}" name="email">
+                        <div class="invalid-feedback" id="emailMsg" th:text="${emailMsg}">
+                            该邮箱已被注册!
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row mt-4">
+                    <label for="verifycode" class="col-sm-2 col-form-label text-right">验证码:</label>
+                    <div class="col-sm-6">
+                        <input type="text" th:class="|form-control ${codeMsg!=null?'is-invalid':''}|" id="verifycode" placeholder="请输入验证码!"
+                               th:value="${param.code}" name="code">
+                        <div class="invalid-feedback" th:text="${codeMsg}">
+                            验证码不正确!
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <a href="javascript:;" class="btn btn-info form-control" id="get-verify-code">获取验证码</a>
+                    </div>
+                </div>
+                <div class="form-group row mt-4">
+                    <label for="your-password" class="col-sm-2 col-form-label text-right">新密码:</label>
+                    <div class="col-sm-10">
+                        <input type="password" th:class="|form-control ${passwordMsg!=null?'is-invalid':''}|" id="your-password" placeholder="请输入新的密码!"
+                               required
+                               th:value="${param.password}" name="password">
+                        <div class="invalid-feedback" th:text="${passwordMsg}">
+                            密码长度不能小于8位!
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row mt-4">
+                    <div class="col-sm-2"></div>
+                    <div class="col-sm-10 text-center">
+                        <button type="submit" class="btn btn-info text-white form-control">重置密码</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 
-		<!-- 尾部 -->
-		<footer class="bg-dark">
-			<div class="container">
-				<div class="row">
-					<!-- 二维码 -->
-					<div class="col-4 qrcode">
-						<img src="https://hgzcommunity.oss-cn-beijing.aliyuncs.com/wechatCode.jpg" class="img-thumbnail" style="width:136px;" />
-					</div>
-					<div class="col-8 detail-info">
-						<div class="row">
-							<div class="col">
-								<ul class="nav">
-									<li class="nav-item">
-										<span class="nav-link text-light">本项目仅供学习，<a style="color: white; font-size: 12px" href="https://github.com/loudandclear1/SpringBoot_community">开源代码仓库地址</a></span>
-									</li>
-								</ul>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col">
-								<ul class="nav btn-group-vertical company-info">
-									<li class="nav-item text-white-50">
-										联系方式：13252756903(电话)
-									</li>
-									<li class="nav-item text-white-50">
-										联系方式：2296162801@qq.com(邮箱)
-									</li>
-								</ul>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</footer>
-	</div>
+    <!-- 尾部 -->
+    <footer class="bg-dark">
+        <div class="container">
+            <div class="row">
+                <!-- 二维码 -->
+                <div class="col-4 qrcode">
+                    <img src="https://hgzcommunity.oss-cn-beijing.aliyuncs.com/wechatCode.jpg" class="img-thumbnail"
+                         style="width:136px;"/>
+                </div>
+                <div class="col-8 detail-info">
+                    <div class="row">
+                        <div class="col">
+                            <ul class="nav">
+                                <li class="nav-item">
+                                    <span class="nav-link text-light">本项目仅供学习，<a
+                                            style="color: white; font-size: 12px"
+                                            href="https://github.com/loudandclear1/SpringBoot_community">开源代码仓库地址</a></span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <ul class="nav btn-group-vertical company-info">
+                                <li class="nav-item text-white-50">
+                                    联系方式：13252756903(电话)
+                                </li>
+                                <li class="nav-item text-white-50">
+                                    联系方式：2296162801@qq.com(邮箱)
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+</div>
 
-	<script src="https://code.jquery.com/jquery-3.3.1.min.js" crossorigin="anonymous"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" crossorigin="anonymous"></script>
-	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" crossorigin="anonymous"></script>
-	<script th:src="@{/js/global.js}"></script>
-	<script>
-		document.addEventListener('DOMContentLoaded', function() {
-			const getCodeBtn = document.getElementById('get-verify-code');
-			let timer = null;
-			let timeLeft = 60;
+<script src="https://code.jquery.com/jquery-3.3.1.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" crossorigin="anonymous"></script>
+<script th:src="@{/js/global.js}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const getCodeBtn = document.getElementById('get-verify-code');
+        let timer = null;
+        let timeLeft = 60;
+        const path = CONTEXT_PATH + "/getCode";
 
-			getCodeBtn.addEventListener('click', function() {
-				if (getCodeBtn.disabled) {
-					return;
-				}
-				getCodeBtn.disabled = true;
-				getCodeBtn.innerText = `重新获取(${timeLeft}s)`;
+        // 发送AJAX请求之前,将CSRF令牌设置到请求的消息头中.
+        var token = $("meta[name='_csrf']").attr("content");
+        var header = $("meta[name='_csrf_header']").attr("content");
+        $(document).ajaxSend(function (e, xhr, options) {
+            xhr.setRequestHeader(header, token);
+        });
 
-				timer = setInterval(() => {
-					timeLeft--;
-					getCodeBtn.innerText = `重新获取(${timeLeft}s)`;
-					if (timeLeft <= 0) {
-						clearInterval(timer);
-						getCodeBtn.disabled = false;
-						getCodeBtn.innerText = '获取验证码';
-					}
-				}, 1000); // 每秒更新时间
-			});
-		});
-	</script>
+        getCodeBtn.addEventListener('click', function () {
+            if (getCodeBtn.disabled) {
+                return;
+            }
+
+            var email = $("#your-email").val();
+
+            $.get(
+                path,
+                {email: email},
+                function (data) {
+                    // 清空消息
+                    $('#emailMsg').text('');
+                    $('#your-email').removeClass('is-invalid');
+
+                    $.each(data, function (key, value) {
+                        if (key === "emailMsg") {
+                            $('#emailMsg').text(value).show();
+                            $('#your-email').addClass('is-invalid');
+                        }
+                    });
+
+                    if (data.code === 0) {
+                        getCodeBtn.disabled = true;
+                        getCodeBtn.innerText = `重新获取(${timeLeft}s)`;
+
+                        timer = setInterval(() => {
+                            timeLeft--;
+                            getCodeBtn.innerText = `重新获取(${timeLeft}s)`;
+                            if (timeLeft <= 0) {
+                                clearInterval(timer);
+                                getCodeBtn.disabled = false;
+                                getCodeBtn.innerText = '获取验证码';
+                                timeLeft = 60;
+                            }
+                        }, 1000);
+                    }
+                });
+        });
+    });
+</script>
 
 </body>
 </html>
